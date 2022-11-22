@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:theme="@style/Theme.StockNewsApp.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/black"
+            app:popupTheme="@style/Theme.StockNewsApp.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <include layout="@layout/content_main"
+        android:id="@+id/content_main"
+        android:layout_below="@+id/toolbar_parent"
+        android:layout_above="@+id/bottom_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/bottom_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:background="@color/black"
+        android:weightSum="3">
+        <Button
+            android:id="@+id/newsBut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="News"
+            android:drawableTop="@drawable/ic_action_news"
+            android:drawableTint="@color/white"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"/>
+        <Button
+            android:id="@+id/favBut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favorite"
+            android:drawableTop="@drawable/ic_action_favorite"
+            android:drawableTint="@color/white"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle" />
+        <Button
+            android:id="@+id/accountBut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Account"
+            android:drawableTop="@drawable/ic_action_account"
+            android:drawableTint="@color/white"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1056359441293",
+    "project_id": "stock-news-app-dd150",
+    "storage_bucket": "stock-news-app-dd150.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056359441293:android:6946dd250f24e8ec5753c4",
+        "android_client_info": {
+          "package_name": "edu.utap.stocknewsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056359441293-qmk1lvlbh159gmsss0f0suvlk9e3db55.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.utap.stocknewsapp",
+            "certificate_hash": "0c494217f91b7b2f3a028a532876bd0d2a0aea49"
+          }
+        },
+        {
+          "client_id": "1056359441293-glpsjlk8u1ft344d8l9tcpr43b1rn356.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxUcEaA113_-cweWmRIBDzF7xG54ckVEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056359441293-glpsjlk8u1ft344d8l9tcpr43b1rn356.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
