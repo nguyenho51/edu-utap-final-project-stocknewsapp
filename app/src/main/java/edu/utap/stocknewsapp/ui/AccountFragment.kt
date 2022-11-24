@@ -1,16 +1,16 @@
 package edu.utap.stocknewsapp.ui
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import edu.utap.stocknewsapp.MainActivity
 import edu.utap.stocknewsapp.R
 import edu.utap.stocknewsapp.databinding.FragmentAccountBinding
@@ -19,7 +19,7 @@ import edu.utap.stocknewsapp.usermetadata.AuthInit
 class AccountFragment: Fragment(R.layout.fragment_account) {
 
     companion object {
-        private const val titleKey = "accountTitle"
+        private const val titleKey = "Account Setting"
         fun newInstance(title: String): AccountFragment {
             val frag = AccountFragment()
             val bundle = Bundle()
@@ -92,7 +92,7 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
                     binding.userPW.visibility = VISIBLE
                     binding.changePasswordET.visibility = INVISIBLE
                     binding.cancelPwBut.visibility = INVISIBLE
-                    AuthInit.changeUserPassword(passwordET,viewModel)
+                    AuthInit.changeUserPassword(passwordET)
                     binding.changePasswordET.text.clear()
                 }
             }
@@ -123,6 +123,7 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
             AuthInit(viewModel,signInLauncher)
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

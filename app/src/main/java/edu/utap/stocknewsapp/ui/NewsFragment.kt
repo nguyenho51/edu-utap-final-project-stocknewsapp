@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import edu.utap.stocknewsapp.R
@@ -16,7 +14,7 @@ import edu.utap.stocknewsapp.databinding.FragmentNewsBinding
 
 class NewsFragment : Fragment(R.layout.fragment_news) {
     companion object {
-        private const val titleKey = "newsTitle"
+        private const val titleKey = "News"
         fun newInstance(title: String): NewsFragment {
             val frag = NewsFragment()
             val bundle = Bundle()
@@ -54,18 +52,12 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentNewsBinding.bind(view)
         Log.d(javaClass.simpleName, "News Frag Created")
-
         val rv = binding.newsRV
         val layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         rv.layoutManager = layoutManager
         val adapter = NewsRowAdapter(viewModel)
-        //val itemDecor = DividerItemDecoration(rv.context, LinearLayoutManager.VERTICAL)
-        //rv.addItemDecoration(itemDecor)
         rv.adapter = adapter
-        rv.itemAnimator = null
         initSwipeLayout(binding.swipeRefreshLayout)
-
-
         viewModel.observeLiveNews().observe(viewLifecycleOwner) {
             val news = viewModel.observeLiveNews().value
             adapter.submitList(news)
@@ -73,6 +65,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         }
 
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

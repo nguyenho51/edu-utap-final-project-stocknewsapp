@@ -15,8 +15,8 @@ class NewsData (
     val url: String? = null,
     @SerializedName("image_url")
     val image_url: String? = null,
-    //@SerializedName("entities")
-    //val entities: List<String>,
+    @SerializedName("entities")
+    val entities: List<NewsData>? = null,
 
     // Useful for search query
     @SerializedName("symbol")

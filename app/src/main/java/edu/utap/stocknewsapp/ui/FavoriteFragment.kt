@@ -17,7 +17,7 @@ import edu.utap.stocknewsapp.databinding.FragmentFavoriteBinding
 
 class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     companion object {
-        private const val titleKey = "favTitle"
+        private const val titleKey = "My Stocks"
         fun newInstance(title: String): NewsFragment {
             val frag = NewsFragment()
             val bundle = Bundle()

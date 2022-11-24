@@ -13,7 +13,8 @@ class AuthInit(viewModel: MainViewModel, signInLauncher: ActivityResultLauncher<
         private const val TAG = "AuthInit"
         fun setDisplayName(displayName : String, viewModel: MainViewModel) {
             Log.d(TAG, "XXX profile change request")
-            // XXX Write me. User is attempting to update display name. Get the profile updates (see android doc)
+            // User is attempting to update display name.
+            // Get the profile updates (see android doc)
             val nameUpdate = UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
                 .build()
@@ -27,7 +28,7 @@ class AuthInit(viewModel: MainViewModel, signInLauncher: ActivityResultLauncher<
                 }
         }
 
-        fun changeUserPassword(newPassword: String, viewModel: MainViewModel) {
+        fun changeUserPassword(newPassword: String /*, viewModel: MainViewModel*/ ) {
             FirebaseAuth.getInstance().currentUser?.updatePassword(newPassword)
                 ?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {

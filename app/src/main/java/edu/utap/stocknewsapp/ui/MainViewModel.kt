@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseAuth
+import edu.utap.stocknewsapp.MainActivity
 import edu.utap.stocknewsapp.api.MarketAuxApi
 import edu.utap.stocknewsapp.api.NewsData
 import edu.utap.stocknewsapp.api.Repository
@@ -21,11 +22,13 @@ class MainViewModel : ViewModel() {
     companion object {
         // Example entities
         private val aapl = NewsData(null, null, null, null, null,
-            symbol = "AAPL", name = "Apple Inc.", exchange = "NASDAQ")
+            symbol = "AAPL", name = "Apple Inc.", exchange = "NASDAQ", entities = null)
         private val amzn = NewsData(null, null, null, null, null,
-            symbol = "AMZN", name = "Amazon.com, Inc.", exchange = "NASDAQ")
+            symbol = "AMZN", name = "Amazon.com, Inc.", exchange = "NASDAQ", entities = null)
 
-        // HANDLE CLICKING A NEWS TO OPEN UP INTENT TO THE NEWS ARTICLE //
+        /*
+        Create website intent for clicking a news row
+         */
         fun goToNews(context: Context, news: NewsData) {
             val url = news.url
             val intent = Intent(Intent.ACTION_VIEW)
@@ -34,15 +37,28 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    /******************** THIS PART HANDLES GENERAL FUNCTIONALITIES ********************/
-    fun signInSuccessful() {
-        isSignIn(true)
-        loadUserInfo()
-        loadUserMeta()
+    /*
+    Enable click-ability of bottom navigation buttons
+     */
+    private var fragTitle: MutableLiveData<MainActivity.FragmentTitle> = MutableLiveData(MainActivity.FragmentTitle.NEWS)
+    fun setFragTitle(title: MainActivity.FragmentTitle) {
+        fragTitle.value = title
+    }
+    fun observeFragTitle(): MutableLiveData<MainActivity.FragmentTitle> {
+        return fragTitle
     }
 
-    /*********** THIS PART HANDLES ANYTHING RELATED TO AUTHENTICATING A USER ***********/
-    // User information
+
+    /*
+    Call this function at login success
+     */
+    fun signInSuccessful() {
+        //isSignIn(true)
+        loadUserInfo()
+        //loadUserMeta()
+    }
+
+    // User's display information in Account Setting fragment
     private var displayName = MutableLiveData("Please log in")
     fun getDisplayName(): MutableLiveData<String> {
         return displayName
@@ -51,13 +67,19 @@ class MainViewModel : ViewModel() {
     fun getDisplayEmail(): MutableLiveData<String> {
         return email
     }
+
+    // Not to be displayed, for internal use only
     private var uid = MutableLiveData("Please log in")
     private var favStockList = mutableListOf<NewsData>()
     private var userMeta: MutableLiveData<UserMeta> = MutableLiveData()
+    fun observeUserMeta(): MutableLiveData<UserMeta> {
+        return userMeta
+    }
 
     // Database access
     private val dbHelp = ViewModelDBHelper()
 
+    /* TODO find use for this later
     private var signIn = MutableLiveData(false)
     fun observeSignInSuccess(): MutableLiveData<Boolean> {
         return signIn
@@ -65,6 +87,8 @@ class MainViewModel : ViewModel() {
     private fun isSignIn(isSignIn: Boolean) {
         signIn.value = isSignIn
     }
+
+     */
 
     fun loadUserInfo() {
         // Call this function after the user logins and after they updated display name
@@ -83,20 +107,12 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private fun loadUserMeta() {
-        // Kick start some forever observers
-        this.userMeta.observeForever {
-            favStockList = userMeta.value?.ownerFavStockList ?: mutableListOf(aapl,amzn)
-            favUpdated()
-            Log.d(javaClass.simpleName, "In side viewModel, " +
+    fun loadUserMeta() {
+        favStockList = userMeta.value?.ownerFavStockList ?: mutableListOf(aapl, amzn)
+        favUpdated()
+        Log.d(javaClass.simpleName, "In side viewModel, " +
                     "user meta posted successfully? ${userMeta.value}")
-            fetchNews()
-        }
-        this.observeNews().observeForever {
-            netNews.value?.let { it1 -> favNews.addAll(it1)
-                newsUpdated()
-            }
-        }
+        fetchNews()
     }
 
     fun createOrUpdateUserMeta() {
@@ -121,9 +137,7 @@ class MainViewModel : ViewModel() {
         createOrUpdateUserMeta()
         FirebaseAuth.getInstance().signOut()
         favNewsLiveData.value = null
-        isSignIn(false)
     }
-    /***********************************************************************************/
 
 
     /******************* THIS PART HANDLES ANYTHING RELATED TO NEWS ********************/
@@ -135,6 +149,9 @@ class MainViewModel : ViewModel() {
     private var favNews = mutableListOf<NewsData>()
     private var newsUpdated: MutableLiveData<Boolean?> = MutableLiveData()
     private var favNewsLiveData = MediatorLiveData<List<NewsData>>().apply {
+        addSource(netNews) {  netNews.value?.let {
+                                favNews.addAll(it)
+                                newsUpdated()}  }
         addSource(newsUpdated) {value = favNews.distinctBy { it.uuid }}
     }
 
@@ -147,17 +164,17 @@ class MainViewModel : ViewModel() {
     }
 
     private fun fetchNews() {
-        for (entity in favStockList) {
-            viewModelScope.launch(context = viewModelScope.coroutineContext
-                        + Dispatchers.IO) {
-                netNews.postValue(repository.getNews(entity.symbol!!))
+        viewModelScope.launch(context = viewModelScope.coroutineContext
+                    + Dispatchers.IO)
+        {
+            favStockList.chunked(2).forEach {
+                // look complicated than it should be, but it does the job for
+                // when a list contains data class instead of primitive type
+                val symbol = it.asSequence().map(NewsData::symbol).joinToString(",")
+                netNews.postValue(repository.getNews(symbol))
             }
         }
     }
-    private fun observeNews(): LiveData<List<NewsData>> {
-        return netNews
-    }
-
 
     /****************** THIS PART HANDLES ANYTHING RELATED TO FAVORITE LIST ************/
     /***********************************************************************************/
@@ -174,9 +191,7 @@ class MainViewModel : ViewModel() {
         addSource(favUpdated) {value = favStockList}
     }
     private var searchTerm = MutableLiveData<String?>()
-//    fun observeSearchTerm(): MutableLiveData<String?> {
-//        return searchTerm
-//    }
+
     fun reinitializeSearchVars() {
         // Fragment Navigator tends to recreate fragment everytime we go from another fragment
         // It's annoying if the below vars aren't reset to null on Favorite Frag's destroy
@@ -202,18 +217,18 @@ class MainViewModel : ViewModel() {
     fun addFavorite(entity: NewsData) {
         favStockList.add(entity)
         favUpdated()
-        favNewsLiveData.value = null
+        favNews.clear()
         fetchNews()
+        newsUpdated()
         createOrUpdateUserMeta()
-        //Log.d("XXX", "Favorite List: $favStockList")
     }
     fun removeFavorite(entity: Int) {
         favStockList.removeAt(entity)
         favUpdated()
-        favNewsLiveData.value = null
+        favNews.clear()
         fetchNews()
+        newsUpdated()
         createOrUpdateUserMeta()
-        //Log.d("XXX", "Favorite List: $favStockList")
     }
     fun observeFavStocksList(): MutableLiveData<List<NewsData>> {
         return favStocksLiveList
