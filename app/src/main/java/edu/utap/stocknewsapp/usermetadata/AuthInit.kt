@@ -57,7 +57,7 @@ class AuthInit(viewModel: MainViewModel, signInLauncher: ActivityResultLauncher<
             signInLauncher.launch(signInIntent)
         } else {
             Log.d(TAG, "XXX user ${user.displayName} email ${user.email}")
-            viewModel.signInSuccessful()
+            viewModel.loadUserInfo()
         }
     }
 

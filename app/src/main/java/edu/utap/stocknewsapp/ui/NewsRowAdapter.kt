@@ -35,9 +35,16 @@ class NewsRowAdapter(private val viewModel: MainViewModel)
         val news = getItem(position)
         Glide.glideFetch(news.image_url!!,binding.rowNewsIV)
         binding.rowNewsTitle.text = news.title
-        binding.rowNewsText.text = news.description
+        val description = news.description
+        if (description?.length!! < 140) {
+            binding.rowNewsDescription.text = description
+        } else {
+            binding.rowNewsDescription.text =
+                String.format("%s...(read more)",description.subSequence(0,120))
+        }
+        val concat = news.entities?.asSequence()?.map(NewsData::symbol)?.joinToString(", ")
+        binding.rowNewsSymbol.text = concat
     }
-
 
     class NewsDiff : DiffUtil.ItemCallback<NewsData>() {
         override fun areItemsTheSame(oldItem: NewsData, newItem: NewsData): Boolean {

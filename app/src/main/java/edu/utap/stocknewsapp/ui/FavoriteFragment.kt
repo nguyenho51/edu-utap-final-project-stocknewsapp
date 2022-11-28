@@ -10,9 +10,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.*
 import edu.utap.stocknewsapp.MainActivity
 import edu.utap.stocknewsapp.R
+import edu.utap.stocknewsapp.api.NewsData
 import edu.utap.stocknewsapp.databinding.FragmentFavoriteBinding
 
 class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
@@ -42,7 +44,7 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
             if (foundEntity != null) {
                 if (foundEntity.isNotEmpty()) {
                     if (!viewModel.isFavoriteByName(foundEntity[0].symbol!!)) {
-                        viewModel.addFavorite(foundEntity[0])
+                        viewModel.addFavorite(foundEntity[0],context)
                     } else {
                         Toast.makeText(
                             context, "Symbol is already added",
@@ -93,6 +95,8 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        (requireActivity() as MainActivity).
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
         return binding.root
     }
 
@@ -100,7 +104,6 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentFavoriteBinding.bind(view)
         Log.d(javaClass.simpleName, "Favorite Frag Created")
-
         val rv = binding.favRV
         val layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         rv.layoutManager = layoutManager

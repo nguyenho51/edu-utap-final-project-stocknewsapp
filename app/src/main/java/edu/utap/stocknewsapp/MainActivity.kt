@@ -16,6 +16,10 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import edu.utap.stocknewsapp.databinding.ActivityMainBinding
 import edu.utap.stocknewsapp.ui.MainViewModel
 import edu.utap.stocknewsapp.usermetadata.AuthInit
+import kotlinx.coroutines.GlobalScope.coroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -91,7 +95,7 @@ class MainActivity : AppCompatActivity() {
     // See: https://developer.android.com/training/basics/intents/result
     private val signInLauncher =
         registerForActivityResult(FirebaseAuthUIActivityResultContract()) {
-            viewModel.signInSuccessful()
+            viewModel.loadUserInfo()
         }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -100,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -107,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         initBottomNavigationEnabler()
         initBottomButtonListener(navController)
         initNewsUpdateObserver()
+        viewModel.fetchQuote()
 
         onBackPressedDispatcher.addCallback(this) {
             // Handle the system back button
@@ -114,9 +120,7 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.NewsFragment)
             viewModel.setFragTitle(FragmentTitle.NEWS)
         }
-
         AuthInit(viewModel, signInLauncher)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean
@@ -136,17 +140,6 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean
-    {
-        // Strictly want appBar back button to navigate to News Fragment
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        navController.popBackStack()
-        navController.navigate(R.id.NewsFragment)
-        return true
-        //return navController.navigateUp(appBarConfiguration)
-        //        || super.onSupportNavigateUp()
     }
 
 }

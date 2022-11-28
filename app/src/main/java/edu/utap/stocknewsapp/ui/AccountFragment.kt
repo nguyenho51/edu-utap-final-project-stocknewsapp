@@ -114,7 +114,7 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
 
     private val signInLauncher =
         registerForActivityResult(FirebaseAuthUIActivityResultContract()) {
-            viewModel.signInSuccessful()
+            viewModel.loadUserInfo()
         }
 
     private fun initLogInOut() {
@@ -124,20 +124,21 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
+        (requireActivity() as MainActivity).
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAccountBinding.bind(view)
         Log.d(javaClass.simpleName, "Account Frag Created")
+
         displayAndChangeName()
         displayAndChangePassword()
         displayEmail()

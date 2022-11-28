@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import edu.utap.stocknewsapp.MainActivity
 import edu.utap.stocknewsapp.R
 import edu.utap.stocknewsapp.databinding.FragmentNewsBinding
 
@@ -36,6 +37,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         swipe.setOnRefreshListener {
             swipe.isRefreshing = false
             viewModel.newsUpdated()
+            viewModel.fetchNews()
         }
     }
 
@@ -44,8 +46,9 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNewsBinding.inflate(inflater, container, false)
+        (requireActivity() as MainActivity).
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,9 +66,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
             adapter.submitList(news)
             adapter.notifyDataSetChanged()
         }
-
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

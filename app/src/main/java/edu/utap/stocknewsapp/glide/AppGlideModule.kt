@@ -39,7 +39,7 @@ object Glide {
         // list disappears.  I think that was an old bug.
         .fitCenter()
         // Rounded corners are so lovely.
-        .transform(RoundedCorners (10))
+        .transform(RoundedCorners (50))
 
     private fun fromHtml(source: String): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

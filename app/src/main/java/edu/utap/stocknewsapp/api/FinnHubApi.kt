@@ -14,20 +14,12 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import java.lang.reflect.Type
 
-interface MarketAuxApi {
-    // Two function prototypes with Retrofit annotations
+interface FinnHubApi {
+    // function prototypes with Retrofit annotations
     // @GET contains a string appended to the base URL
     // the string is called a path name
-    @GET("/v1/news/all?api_token=0x9eN1hvQ1ZaGxCb5ZGalLNNzfbfzfPieVe29Y1F"
-            +"&filter_entities=true" + "&language=en" + "&exchanges=NASDAQ,NYSE"
-            +"&countries=us")
-    suspend fun getNews(@Query("symbols") entity: String) : NewsResponse
-
-    @GET("/v1/entity/search?api_token=0x9eN1hvQ1ZaGxCb5ZGalLNNzfbfzfPieVe29Y1F"
-            +"&countries=us" + "&exchanges=NASDAQ,NYSE,NYSEARCA" )
-    suspend fun searchEntity(@Query("search") entity: String) : NewsResponse
-
-    data class NewsResponse(val data: List<NewsData>)
+    @GET("/api/v1/quote?token=ce20qh2ad3idecbgmsa0ce20qh2ad3idecbgmsag")
+    suspend fun getQuote(@Query("symbol") entity: String) : QuoteResponse
 
     // This class allows Retrofit to parse items in our model of type
     // SpannableString.  Note, given the amount of "work" we do to
@@ -43,7 +35,6 @@ interface MarketAuxApi {
         }
     }
 
-
     companion object {
         // Tell Gson to use our SpannableString deserializer
         private fun buildGsonConverterFactory(): GsonConverterFactory {
@@ -55,10 +46,10 @@ interface MarketAuxApi {
         // Keep the base URL simple
         var httpurl = HttpUrl.Builder()
             .scheme("https")
-            .host("api.marketaux.com")
+            .host("finnhub.io")
             .build()
-        fun create(): MarketAuxApi = create(httpurl)
-        private fun create(httpUrl: HttpUrl): MarketAuxApi {
+        fun create(): FinnHubApi = create(httpurl)
+        private fun create(httpUrl: HttpUrl): FinnHubApi {
             val client = OkHttpClient.Builder()
                 .addInterceptor(HttpLoggingInterceptor().apply {
                     // Enable basic HTTP logging to help with debugging.
@@ -70,7 +61,8 @@ interface MarketAuxApi {
                 .client(client)
                 .addConverterFactory(buildGsonConverterFactory())
                 .build()
-                .create(MarketAuxApi::class.java)
+                .create(FinnHubApi::class.java)
         }
     }
 }
+

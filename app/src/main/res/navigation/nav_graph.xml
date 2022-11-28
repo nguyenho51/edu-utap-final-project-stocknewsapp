@@ -10,14 +10,6 @@
         android:name="edu.utap.stocknewsapp.ui.NewsFragment"
         android:label="@string/news_fragment_label"
         tools:layout="@layout/fragment_news">
-
-        <action
-            android:id="@+id/action_NewsFragment_to_FavFragment"
-            app:destination="@id/FavoriteFragment" />
-        <action
-            android:id="@+id/action_NewsFragment_to_AccFragment"
-            app:destination="@id/AccountFragment" />
-
     </fragment>
 
     <fragment
@@ -25,14 +17,6 @@
         android:name="edu.utap.stocknewsapp.ui.FavoriteFragment"
         android:label="@string/favorite_fragment_label"
         tools:layout="@layout/fragment_favorite">
-
-        <action
-            android:id="@+id/action_FavFragment_to_NewsFragment"
-            app:destination="@id/NewsFragment" />
-        <action
-            android:id="@+id/action_FavFragment_to_AccFragment"
-            app:destination="@id/AccountFragment" />
-
     </fragment>
 
     <fragment
@@ -40,14 +24,6 @@
         android:name="edu.utap.stocknewsapp.ui.AccountFragment"
         android:label="@string/account_fragment_label"
         tools:layout="@layout/fragment_account">
-
-        <action
-            android:id="@+id/action_AccFragment_to_NewsFragment"
-            app:destination="@id/NewsFragment" />
-        <action
-            android:id="@+id/action_AccFragment_to_FavFragment"
-            app:destination="@id/FavoriteFragment" />
-
     </fragment>
 
 </navigation>

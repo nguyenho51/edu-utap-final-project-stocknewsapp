@@ -7,5 +7,6 @@
     <string name="account_fragment_label">Account Setting</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="important_notice">Important notice: A maximum of 10 stock symbols can be added.</string>
 
 </resources>
