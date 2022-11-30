@@ -141,7 +141,7 @@ class MainViewModel : ViewModel() {
         try {
             return favList.distinctBy { it.uuid }.sortedBy { it.entities?.get(0)?.symbol }
         } catch (e: ConcurrentModificationException) {
-            Log.e("addDistinctFunction", "Concurrent Mod Error")
+            Log.e("VMAddDistinctFunction", "Concurrent Mod Error")
         }
         return favList
     }
@@ -226,7 +226,7 @@ class MainViewModel : ViewModel() {
                     context, "Watchlist is full!",Toast.LENGTH_SHORT).show()
             }
         } catch (e: java.lang.NullPointerException) {
-            Log.e("ViewModel", "Users not logged in")
+            Log.e("VMAddFavoriteError", "Users not logged in")
         }
     }
     fun removeFavorite(entity: Int, context: Context?) {
@@ -238,7 +238,7 @@ class MainViewModel : ViewModel() {
             newsUpdated()
             createOrUpdateUserMeta()
         } catch (e: java.lang.NullPointerException) {
-            Log.e("ViewModel", "Users not logged in")
+            Log.e("VMRemoreFavoriteError", "Users not logged in, $context")
         }
     }
     fun observeFavStocksList(): MutableLiveData<List<NewsData>> {
@@ -256,9 +256,9 @@ class MainViewModel : ViewModel() {
                     listFavStockWithQuote.postValue(quoteRepository.getMultipleQuote(favStockList))
                     delay(15000)
                 } catch (e: ConcurrentModificationException) {
-                    Log.e("Error", "Favorite list is modified!")
+                    Log.e("VMConcurrentError", "Favorite list is modified!")
                 } catch (e: java.lang.NullPointerException) {
-                    Log.e("Error", "Favorite list is empty!")
+                    Log.e("VMNullPointerError", "Favorite list is empty!")
                 }
             }
         }
