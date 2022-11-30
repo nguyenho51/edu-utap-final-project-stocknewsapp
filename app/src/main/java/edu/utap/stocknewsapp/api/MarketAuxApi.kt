@@ -52,7 +52,6 @@ interface MarketAuxApi {
         }
     }
 
-
     companion object {
         // Tell Gson to use our SpannableString deserializer
         private fun buildGsonConverterFactory(): GsonConverterFactory {

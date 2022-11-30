@@ -10,8 +10,8 @@ import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseAuth
 import edu.utap.stocknewsapp.MainActivity
 import edu.utap.stocknewsapp.api.*
-import edu.utap.stocknewsapp.usermetadata.UserMeta
-import edu.utap.stocknewsapp.usermetadata.ViewModelDBHelper
+import edu.utap.stocknewsapp.firebase.UserMeta
+import edu.utap.stocknewsapp.firebase.ViewModelDBHelper
 import kotlinx.coroutines.*
 
 class MainViewModel : ViewModel() {
@@ -84,11 +84,6 @@ class MainViewModel : ViewModel() {
     fun loadUserInfo() {
         // Call this function after the user logins and after they updated display name
         // Can also implement a delay after pushing new data to cloud before call to get updates
-        //viewModelScope.launch(
-        //    context = viewModelScope.coroutineContext
-        //           + Dispatchers.Default){
-        //    delay(500)
-        //}
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             fetchUserMeta()
@@ -174,7 +169,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-
     /*
     -----Search and find stock symbol-----
      */
@@ -197,7 +191,6 @@ class MainViewModel : ViewModel() {
         foundEntity.value = null
         searchTerm.value = null
     }
-
 
     /*
     -----Favorite fragment's contents handler-----

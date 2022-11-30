@@ -1,10 +1,8 @@
-package edu.utap.stocknewsapp.usermetadata
+package edu.utap.stocknewsapp.firebase
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.firebase.ui.auth.data.model.User
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 
 class ViewModelDBHelper() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -45,25 +43,4 @@ class ViewModelDBHelper() {
                     e -> Log.w(javaClass.simpleName, "Error creating/updating user meta", e)
             }
     }
-
-    /*
-    // https://firebase.google.com/docs/firestore/manage-data/delete-data#delete_documents
-    // Future update: Letting user delete their account/user meta
-    fun removePhotoMeta(
-        sortInfo: SortInfo,
-        photoMeta: PhotoMeta,
-        photoMetaList: MutableLiveData<List<PhotoMeta>>
-    ) {
-        // XXX Write me.  Make sure you delete the correct entry
-        db.collection(rootCollection)
-            .document(photoMeta.firestoreID)
-            .delete()
-            .addOnSuccessListener {
-                Log.d(javaClass.simpleName, "DocumentSnapshot successfully deleted!")
-                dbFetchUserMeta(sortInfo, photoMetaList)
-            }
-            .addOnFailureListener { e -> Log.w(javaClass.simpleName, "Error deleting document", e) }
-    }
-
-     */
 }

@@ -1,4 +1,4 @@
-package edu.utap.stocknewsapp.usermetadata
+package edu.utap.stocknewsapp.firebase
 
 import android.content.Intent
 import android.util.Log

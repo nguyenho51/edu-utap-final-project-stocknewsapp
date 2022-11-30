@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import edu.utap.stocknewsapp.databinding.ActivityMainBinding
 import edu.utap.stocknewsapp.ui.MainViewModel
-import edu.utap.stocknewsapp.usermetadata.AuthInit
+import edu.utap.stocknewsapp.firebase.AuthInit
 
 class MainActivity : AppCompatActivity() {
 
@@ -112,6 +112,10 @@ class MainActivity : AppCompatActivity() {
             if (it.resultCode == RESULT_OK) {
                 viewModel.setIsLoggedIn(true)
                 viewModel.loadUserInfo()
+            } else {
+                viewModel.setIsLoggedIn(false)
+                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                navController.navigate(R.id.AccountFragment)
             }
         }
 

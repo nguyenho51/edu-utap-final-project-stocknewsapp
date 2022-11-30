@@ -32,8 +32,7 @@ class NewsRepository(private val api: MarketAuxApi) {
                         api.getNews(it.symbol!!)
                     }
                     favNewsList.addAll(fetchedNews.data)
-                }
-                 */
+                }*/
             } catch (e: ConcurrentModificationException) {
                 Log.e("Error", "Favorite list is modified!")
             }

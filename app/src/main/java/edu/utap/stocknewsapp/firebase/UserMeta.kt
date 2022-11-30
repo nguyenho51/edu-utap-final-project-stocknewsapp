@@ -1,7 +1,6 @@
-package edu.utap.stocknewsapp.usermetadata
+package edu.utap.stocknewsapp.firebase
 
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
 import edu.utap.stocknewsapp.api.NewsData
 

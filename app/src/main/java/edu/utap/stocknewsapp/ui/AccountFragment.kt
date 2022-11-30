@@ -11,12 +11,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.google.firebase.auth.FirebaseAuth
 import edu.utap.stocknewsapp.MainActivity
 import edu.utap.stocknewsapp.R
 import edu.utap.stocknewsapp.databinding.FragmentAccountBinding
-import edu.utap.stocknewsapp.usermetadata.AuthInit
+import edu.utap.stocknewsapp.firebase.AuthInit
 
 class AccountFragment: Fragment(R.layout.fragment_account) {
 
@@ -117,9 +117,13 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
             if (isSignIn == true) {
                 binding.logOutBut.visibility = VISIBLE
                 binding.logInBut.visibility = INVISIBLE
+                binding.changeSaveNameBut.visibility = VISIBLE
+                binding.changeSavePwBut.visibility = VISIBLE
             } else {
                 binding.logOutBut.visibility = INVISIBLE
                 binding.logInBut.visibility = VISIBLE
+                binding.changeSaveNameBut.visibility = INVISIBLE
+                binding.changeSavePwBut.visibility = INVISIBLE
             }
         }
         binding.logOutBut.setOnClickListener {
