@@ -1,34 +1,24 @@
 package edu.utap.stocknewsapp.ui
 
-import android.app.Dialog
+
 import android.os.Bundle
 import android.util.Log
+
 import android.view.*
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.FirebaseAuth
 import edu.utap.stocknewsapp.MainActivity
 import edu.utap.stocknewsapp.R
 import edu.utap.stocknewsapp.databinding.FragmentAccountBinding
 import edu.utap.stocknewsapp.usermetadata.AuthInit
 
 class AccountFragment: Fragment(R.layout.fragment_account) {
-
-    companion object {
-        private const val titleKey = "Account Setting"
-        fun newInstance(title: String): AccountFragment {
-            val frag = AccountFragment()
-            val bundle = Bundle()
-            // XXX set the fragment's arguments
-            bundle.putString(titleKey, title)
-            frag.arguments = bundle
-            return frag
-        }
-    }
 
     private val viewModel: MainViewModel by activityViewModels()
     private var _binding: FragmentAccountBinding? = null
@@ -51,7 +41,7 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
             } else {
                 val nameET = binding.changeNameET.text.toString()
                 if (nameET.length < 4) {
-                    Toast.makeText(context,"Username must contain 4 to 30 characters",
+                    Toast.makeText(context,"Username must contain 4 to 14 characters",
                         Toast.LENGTH_SHORT).show()
                 } else {
                     (requireActivity() as MainActivity).hideKeyboard()
@@ -84,7 +74,7 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
             } else {
                 val passwordET = binding.changePasswordET.text.toString()
                 if (passwordET.length < 5) {
-                    Toast.makeText( context, "Password must contain 6 to 30 characters",
+                    Toast.makeText( context, "Password must contain 6 to 20 characters",
                         Toast.LENGTH_SHORT).show()
                 } else {
                     binding.changeSavePwBut.text = "Change"
@@ -114,12 +104,35 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
 
     private val signInLauncher =
         registerForActivityResult(FirebaseAuthUIActivityResultContract()) {
-            viewModel.loadUserInfo()
+            if (it.resultCode == AppCompatActivity.RESULT_OK) {
+                viewModel.setIsLoggedIn(true)
+                viewModel.loadUserInfo()
+            }
         }
 
     private fun initLogInOut() {
-        binding.logInOutBut.setOnClickListener {
-            viewModel.signOut()
+        viewModel.observeSignIn().observe(viewLifecycleOwner) {
+            val isSignIn = viewModel.observeSignIn().value
+            Log.d("XXX isSignIn", "Current State: $isSignIn")
+            if (isSignIn == true) {
+                binding.logOutBut.visibility = VISIBLE
+                binding.logInBut.visibility = INVISIBLE
+            } else {
+                binding.logOutBut.visibility = INVISIBLE
+                binding.logInBut.visibility = VISIBLE
+            }
+        }
+        binding.logOutBut.setOnClickListener {
+            viewModel.resetNameAndEmail()
+            try {
+                viewModel.signOut()
+            } catch (e: java.lang.NullPointerException) {
+                viewModel.setIsLoggedIn(false)
+
+            }
+        }
+        binding.logInBut.setOnClickListener {
+            //val isSignIn = viewModel.observeSignIn().value
             AuthInit(viewModel,signInLauncher)
         }
     }
@@ -138,7 +151,7 @@ class AccountFragment: Fragment(R.layout.fragment_account) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAccountBinding.bind(view)
         Log.d(javaClass.simpleName, "Account Frag Created")
-
+        //Log.d("XXX", "Current State: ${viewModel.observeSignIn().value}")
         displayAndChangeName()
         displayAndChangePassword()
         displayEmail()

@@ -1,5 +1,6 @@
 package edu.utap.stocknewsapp.ui
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -49,6 +50,7 @@ class FavoriteRowAdapter(private val viewModel: MainViewModel)
             }
         } else {
             binding.rowFavPriceChange.text = priceChange
+            binding.rowFavPriceChange.setBackgroundColor(Color.TRANSPARENT)
         }
     }
 }

@@ -12,10 +12,7 @@ import edu.utap.stocknewsapp.MainActivity
 import edu.utap.stocknewsapp.api.*
 import edu.utap.stocknewsapp.usermetadata.UserMeta
 import edu.utap.stocknewsapp.usermetadata.ViewModelDBHelper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class MainViewModel : ViewModel() {
 
@@ -52,6 +49,22 @@ class MainViewModel : ViewModel() {
     /*
     -----Account Fragment's content builder-----
      */
+    private var isLoggedIn: MutableLiveData<Boolean> = MutableLiveData()
+    fun setIsLoggedIn(loggedIn: Boolean) {
+        isLoggedIn.value = loggedIn
+    }
+    fun observeSignIn(): MutableLiveData<Boolean> {
+        return isLoggedIn
+    }
+    fun resetNameAndEmail() {
+        viewModelScope.launch(
+            context = viewModelScope.coroutineContext
+                    + Dispatchers.Default){
+            delay(2000)
+            displayName.postValue("Please log in")
+            email.postValue("Please log in")
+        }
+    }
     private var displayName = MutableLiveData("Please log in")
     fun getDisplayName(): MutableLiveData<String> {
         return displayName
@@ -66,17 +79,16 @@ class MainViewModel : ViewModel() {
     fun observeUserMeta(): MutableLiveData<UserMeta> {
         return userMeta
     }
-
     private val dbHelp = ViewModelDBHelper() // Database access
 
     fun loadUserInfo() {
         // Call this function after the user logins and after they updated display name
         // Can also implement a delay after pushing new data to cloud before call to get updates
-        viewModelScope.launch(
-            context = viewModelScope.coroutineContext
-                   + Dispatchers.Default){
-            delay(500)
-        }
+        //viewModelScope.launch(
+        //    context = viewModelScope.coroutineContext
+        //           + Dispatchers.Default){
+        //    delay(500)
+        //}
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             fetchUserMeta()
@@ -88,7 +100,7 @@ class MainViewModel : ViewModel() {
     fun loadUserMeta() {
         // Call this function when the user successfully logged-in
         favStockList = userMeta.value?.ownerFavStockList ?: mutableListOf(aapl, amzn)
-        fetchNews()
+        fetchNewsAtLaunch()
         favUpdated()
     }
     fun createOrUpdateUserMeta() {
@@ -106,13 +118,14 @@ class MainViewModel : ViewModel() {
         val currentUser = FirebaseAuth.getInstance().currentUser!!
         dbHelp.fetchUserMeta(currentUser.uid,userMeta)
     }
+
     fun signOut() {
-        // call this function when user signs out
+        // call this function when user hits sign-out button
         createOrUpdateUserMeta()
         FirebaseAuth.getInstance().signOut()
         favNewsLiveData.value = null
+        setIsLoggedIn(false)
     }
-
 
     /*
     -----News Fragment's content builder-----
@@ -123,10 +136,19 @@ class MainViewModel : ViewModel() {
     private var favNews = mutableListOf<NewsData>()
     private var newsUpdated: MutableLiveData<Boolean?> = MutableLiveData()
     private var favNewsLiveData = MediatorLiveData<List<NewsData>>().apply {
-        addSource(netNews) {  netNews.value?.let {
-                                favNews.addAll(it)
-                                newsUpdated()}  }
-        addSource(newsUpdated) {value = favNews.distinctBy { it.uuid }}
+        addSource(netNews) {  netNews.value?.let { favNews.addAll(it)
+                                newsUpdated() }
+                            }
+        addSource(newsUpdated) { value = addDistinctNews(favNews) }
+    }
+
+    private fun addDistinctNews(favList: MutableList<NewsData>): List<NewsData> {
+        try {
+            return favList.distinctBy { it.uuid }.sortedBy { it.entities?.get(0)?.symbol }
+        } catch (e: ConcurrentModificationException) {
+            Log.e("addDistinctFunction", "Concurrent Mod Error")
+        }
+        return favList
     }
 
     fun observeLiveNews(): MediatorLiveData<List<NewsData>> {
@@ -136,16 +158,19 @@ class MainViewModel : ViewModel() {
         val updated = newsUpdated.value
         newsUpdated.value = updated
     }
+    private fun fetchNewsAtLaunch() {
+        viewModelScope.launch(context = viewModelScope.coroutineContext
+                + Dispatchers.IO)
+        {
+            netNews.postValue(newsRepository.getNewsToStart(favStockList))
+        }
+    }
+
     fun fetchNews() {
         viewModelScope.launch(context = viewModelScope.coroutineContext
                     + Dispatchers.IO)
         {
-            favStockList.chunked(3).forEach {
-                // look complicated than it should be, but it does the job for
-                // when a list contains data class instead of primitive type
-                val symbol = it.asSequence().map(NewsData::symbol).joinToString(",")
-                netNews.postValue(newsRepository.getNews(symbol))
-            }
+            netNews.postValue(newsRepository.getNews(favStockList,favNews))
         }
     }
 
@@ -195,30 +220,41 @@ class MainViewModel : ViewModel() {
         return false
     }
     fun addFavorite(entity: NewsData, context: Context?) {
-        if (favStockList.size < 10 ) {
-            favStockList.add(entity)
+        try {
+            if (favStockList.size < 10 ) {
+                favStockList.add(entity)
+                favUpdated()
+                favNews.clear()
+                fetchNews()
+                newsUpdated()
+                createOrUpdateUserMeta()
+            } else {
+                Toast.makeText(
+                    context, "Watchlist is full!",Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: java.lang.NullPointerException) {
+            Log.e("ViewModel", "Users not logged in")
+        }
+    }
+    fun removeFavorite(entity: Int, context: Context?) {
+        try {
+            favStockList.removeAt(entity)
             favUpdated()
             favNews.clear()
             fetchNews()
+            newsUpdated()
             createOrUpdateUserMeta()
-        } else {
-            Toast.makeText(
-                context, "Watchlist is full!",Toast.LENGTH_SHORT).show()
+        } catch (e: java.lang.NullPointerException) {
+            Log.e("ViewModel", "Users not logged in")
         }
-    }
-    fun removeFavorite(entity: Int) {
-        favStockList.removeAt(entity)
-        favUpdated()
-        favNews.clear()
-        fetchNews()
-        createOrUpdateUserMeta()
     }
     fun observeFavStocksList(): MutableLiveData<List<NewsData>> {
         return listFavStockWithQuote
     }
 
     fun fetchQuote() {
-        // Call this function when the apps starts
+        // Call this function when the apps starts,
+        // updates stock price and change % every 15 seconds
         viewModelScope.launch(context = viewModelScope.coroutineContext
                 + Dispatchers.IO)
         {

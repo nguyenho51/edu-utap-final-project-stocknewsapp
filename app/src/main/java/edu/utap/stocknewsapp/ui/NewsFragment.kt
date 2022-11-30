@@ -14,17 +14,6 @@ import edu.utap.stocknewsapp.R
 import edu.utap.stocknewsapp.databinding.FragmentNewsBinding
 
 class NewsFragment : Fragment(R.layout.fragment_news) {
-    companion object {
-        private const val titleKey = "News"
-        fun newInstance(title: String): NewsFragment {
-            val frag = NewsFragment()
-            val bundle = Bundle()
-            // XXX set the fragment's arguments
-            bundle.putString(titleKey, title)
-            frag.arguments = bundle
-            return frag
-        }
-    }
 
     private val viewModel: MainViewModel by activityViewModels()
     private var _binding: FragmentNewsBinding? = null
@@ -36,8 +25,8 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
     private fun initSwipeLayout(swipe : SwipeRefreshLayout) {
         swipe.setOnRefreshListener {
             swipe.isRefreshing = false
-            viewModel.newsUpdated()
             viewModel.fetchNews()
+            viewModel.newsUpdated()
         }
     }
 

@@ -2,13 +2,8 @@ package edu.utap.stocknewsapp.api
 
 import android.util.Log
 import kotlinx.coroutines.*
-import okhttp3.internal.wait
 
 class QuoteRepository(private val api: FinnHubApi) {
-
-    suspend fun getQuote(entity: String): QuoteResponse {
-        return api.getQuote(entity.uppercase())
-    }
 
     suspend fun getMultipleQuote(favList: List<NewsData>): List<NewsData> {
         CoroutineScope(Dispatchers.IO).launch {

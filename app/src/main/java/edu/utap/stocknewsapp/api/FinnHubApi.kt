@@ -1,21 +1,25 @@
 package edu.utap.stocknewsapp.api
 
+import android.os.SystemClock
 import android.text.SpannableString
+import android.util.Log
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.lang.reflect.Type
+import java.util.concurrent.TimeUnit
 
 interface FinnHubApi {
-    // function prototypes with Retrofit annotations
+    // Function prototypes with Retrofit annotations
     // @GET contains a string appended to the base URL
     // the string is called a path name
     @GET("/api/v1/quote?token=ce20qh2ad3idecbgmsa0ce20qh2ad3idecbgmsag")
@@ -44,17 +48,41 @@ interface FinnHubApi {
             return GsonConverterFactory.create(gsonBuilder.create())
         }
         // Keep the base URL simple
-        var httpurl = HttpUrl.Builder()
+        private var httpurl = HttpUrl.Builder()
             .scheme("https")
             .host("finnhub.io")
             .build()
         fun create(): FinnHubApi = create(httpurl)
         private fun create(httpUrl: HttpUrl): FinnHubApi {
             val client = OkHttpClient.Builder()
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES) // write timeout
+                .callTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES) // read timeout
+                .retryOnConnectionFailure(true)
                 .addInterceptor(HttpLoggingInterceptor().apply {
                     // Enable basic HTTP logging to help with debugging.
                     this.level = HttpLoggingInterceptor.Level.BASIC
                 })
+                .addInterceptor{ chain ->
+                    val request = chain.request()
+                    //var response = chain.proceed(request)
+                    var response: Response? = null
+                    var responseOK = false
+                    var tryCount = 0
+                    while (!responseOK && tryCount < 3) {
+                        try {
+                            SystemClock.sleep(3000)
+                            response = chain.proceed(request)
+                            responseOK = response.isSuccessful
+                        } catch (e: Exception) {
+                            Log.d("intercept", "Request is not successful - $tryCount")
+                        } finally {
+                            tryCount++
+                        }
+                    }
+                    response!!
+                }
                 .build()
             return Retrofit.Builder()
                 .baseUrl(httpUrl)

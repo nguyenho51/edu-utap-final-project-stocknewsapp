@@ -18,17 +18,6 @@ import edu.utap.stocknewsapp.api.NewsData
 import edu.utap.stocknewsapp.databinding.FragmentFavoriteBinding
 
 class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
-    companion object {
-        private const val titleKey = "My Stocks"
-        fun newInstance(title: String): NewsFragment {
-            val frag = NewsFragment()
-            val bundle = Bundle()
-            // XXX set the fragment's arguments
-            bundle.putString(titleKey, title)
-            frag.arguments = bundle
-            return frag
-        }
-    }
 
     private val viewModel: MainViewModel by activityViewModels()
     private var _binding: FragmentFavoriteBinding? = null
@@ -40,7 +29,6 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     private fun initSearchEntity() {
         viewModel.observeFoundEntity().observe(viewLifecycleOwner) {
             val foundEntity = viewModel.observeFoundEntity().value
-            //Log.d("XXX", "Found entity: $foundEntity")
             if (foundEntity != null) {
                 if (foundEntity.isNotEmpty()) {
                     if (!viewModel.isFavoriteByName(foundEntity[0].symbol!!)) {
@@ -84,7 +72,7 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
                                       direction: Int) {
                     val position = getPos(viewHolder)
                     Log.d(javaClass.simpleName, "Swipe delete $position")
-                    viewModel.removeFavorite(position)
+                    viewModel.removeFavorite(position,context)
                 }
             }
         return ItemTouchHelper(simpleItemTouchCallback)

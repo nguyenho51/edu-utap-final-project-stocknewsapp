@@ -17,7 +17,7 @@
         android:dividerHeight="0.0px"
         android:clipToPadding="false"
         android:clipChildren="false"
-        card_view:cardCornerRadius="4dp"
+        card_view:cardCornerRadius="0dp"
         card_view:cardElevation="10dp"
         android:layout_marginEnd="4dp"
         android:layout_marginStart="4dp"
@@ -44,8 +44,6 @@
         android:clipChildren="false"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="10dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp">
     <LinearLayout
@@ -122,10 +120,8 @@
         android:dividerHeight="0.0px"
         android:clipToPadding="false"
         android:clipChildren="false"
-        card_view:cardCornerRadius="4dp"
+        card_view:cardCornerRadius="0dp"
         card_view:cardElevation="10dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_below="@id/nameSection">
@@ -203,10 +199,8 @@
         android:dividerHeight="0.0px"
         android:clipToPadding="false"
         android:clipChildren="false"
-        card_view:cardCornerRadius="4dp"
+        card_view:cardCornerRadius="0dp"
         card_view:cardElevation="10dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_below="@id/passwordSection">
@@ -242,7 +236,7 @@
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/log_in_out_but"
+        android:id="@+id/log_out_but"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -254,5 +248,18 @@
         android:textStyle="bold"
         android:text="Log out"/>
 
+    <Button
+        android:id="@+id/log_in_but"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/gray"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginBottom="50dp"
+        android:textStyle="bold"
+        android:text="Log In"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

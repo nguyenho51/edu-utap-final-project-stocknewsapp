@@ -13,8 +13,6 @@ class AuthInit(viewModel: MainViewModel, signInLauncher: ActivityResultLauncher<
         private const val TAG = "AuthInit"
         fun setDisplayName(displayName : String, viewModel: MainViewModel) {
             Log.d(TAG, "XXX profile change request")
-            // User is attempting to update display name.
-            // Get the profile updates (see android doc)
             val nameUpdate = UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
                 .build()
@@ -41,11 +39,9 @@ class AuthInit(viewModel: MainViewModel, signInLauncher: ActivityResultLauncher<
     init {
         val user = FirebaseAuth.getInstance().currentUser
         if(user == null) {
-            Log.d(TAG, "XXX user null")
             // Choose authentication providers
             val providers = arrayListOf(
                 AuthUI.IdpConfig.EmailBuilder().build())
-
             // Create and launch sign-in intent
             // Set authentication providers and start sign-in for user
             // setIsSmartLockEnabled(false) solves some problems
@@ -56,7 +52,8 @@ class AuthInit(viewModel: MainViewModel, signInLauncher: ActivityResultLauncher<
                 .build()
             signInLauncher.launch(signInIntent)
         } else {
-            Log.d(TAG, "XXX user ${user.displayName} email ${user.email}")
+            // User already signed in
+            viewModel.setIsLoggedIn(true)
             viewModel.loadUserInfo()
         }
     }

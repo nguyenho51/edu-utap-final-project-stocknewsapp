@@ -1,25 +1,18 @@
 package edu.utap.stocknewsapp
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.addCallback
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import edu.utap.stocknewsapp.databinding.ActivityMainBinding
 import edu.utap.stocknewsapp.ui.MainViewModel
 import edu.utap.stocknewsapp.usermetadata.AuthInit
-import kotlinx.coroutines.GlobalScope.coroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -60,16 +53,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun initBottomButtonListener(navController: NavController) {
-        binding.newsBut.setOnClickListener {
-            //Log.d("XXX Current Destination", "${navController.currentDestination?.label}")
-            navController.popBackStack()
-            navController.navigate(R.id.NewsFragment)
-            viewModel.setFragTitle(FragmentTitle.NEWS)
-        }
-        binding.favBut.setOnClickListener {
-            navController.popBackStack()
-            navController.navigate(R.id.FavoriteFragment)
-            viewModel.setFragTitle(FragmentTitle.FAVORITE)
+        viewModel.observeSignIn().observe(this) {
+            when (viewModel.observeSignIn().value) {
+                true -> {
+                    binding.newsBut.isClickable = true
+                    binding.favBut.isClickable = true
+                    binding.newsBut.setOnClickListener {
+                        navController.popBackStack()
+                        navController.navigate(R.id.NewsFragment)
+                        viewModel.setFragTitle(FragmentTitle.NEWS)
+                    }
+                    binding.favBut.setOnClickListener {
+                        navController.popBackStack()
+                        navController.navigate(R.id.FavoriteFragment)
+                        viewModel.setFragTitle(FragmentTitle.FAVORITE)
+                    }
+                }
+                else -> {
+                    binding.newsBut.isClickable = false
+                    binding.favBut.isClickable = false
+                    binding.newsBut.setOnClickListener {
+                        Toast.makeText(this,
+                            "Please log in to read news", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    binding.favBut.setOnClickListener {
+                        Toast.makeText(this,
+                            "Please log in to edit watchlist", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
         binding.accountBut.setOnClickListener {
             navController.popBackStack()
@@ -92,10 +106,13 @@ class MainActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(window.decorView.rootView.windowToken, 0)
     }
 
-    // See: https://developer.android.com/training/basics/intents/result
+    //See: https://developer.android.com/training/basics/intents/result
     private val signInLauncher =
         registerForActivityResult(FirebaseAuthUIActivityResultContract()) {
-            viewModel.loadUserInfo()
+            if (it.resultCode == RESULT_OK) {
+                viewModel.setIsLoggedIn(true)
+                viewModel.loadUserInfo()
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -113,24 +130,19 @@ class MainActivity : AppCompatActivity() {
         initBottomButtonListener(navController)
         initNewsUpdateObserver()
         viewModel.fetchQuote()
-
-        onBackPressedDispatcher.addCallback(this) {
-            // Handle the system back button
-            navController.popBackStack()
-            navController.navigate(R.id.NewsFragment)
-            viewModel.setFragTitle(FragmentTitle.NEWS)
-        }
         AuthInit(viewModel, signInLauncher)
     }
+}
 
+    /*
+    TODO: For next release, adding Setting menu button to switch between
+        Standard and Dark Modes
     override fun onCreateOptionsMenu(menu: Menu): Boolean
     {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean
     {
         // Handle action bar item clicks here. The action bar will
@@ -141,5 +153,4 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-}
+    */
