@@ -3,5 +3,5 @@
 
 # edu-utap-final-project-stock-news-app
 
-Author: Nguyen Ho
+Author: Nguyen Ho  
 Email: ngho@eng.ucsd.edu or ngho@utexas.edu
