@@ -1,20 +1,8 @@
-<<<<<<< HEAD
-# Repository for CS395T-Android Programming Course - Final Project - MSCSO Fall 2022
-
-# edu-utap-final-project-stock-news-app
-
-1. Name: Nguyen Ho
-2. EID: nh23954
-3. Email: ngho@eng.ucsd.edu
-4. Time(How many hours you worked on this assignment): 60 hrs
-5. Slip days: 0
-6. Comments: n/a
-=======
-## Repository for University of Texas at Austin - CS386T: Android Programming 
-## Final Project Fall 2022 (edu-utap-final-project-stock-news-app)
+# Repository for University of Texas at Austin - CS386T: Android Programming 
+Fall 2022 Final Project (edu-utap-final-project-stocknewsapp)
 
 # Author
-Nguyen Ho  
+Nguyen Ho
 Contact: ngho@eng.ucsd.edu or ngho@utexas.edu
 
 # Stock News App
@@ -42,5 +30,10 @@ Please make sure to update tests as appropriate.
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-![alt text](https://github.com/nguyenho51/edu-utap-final-project-stocknewsapp/blob/[branch]/image.jpg?raw=true)
->>>>>>> eaa4b53c74237dc461bb748f2d1b5e7f287438c5
+## App Overview
+
+![alt text](https://github.com/nguyenho51/edu-utap-final-project-stocknewsapp/blob/main/images/utap_final_project_stock_news_app_writeup-5.jpg?raw=true)
+![alt text](https://github.com/nguyenho51/edu-utap-final-project-stocknewsapp/blob/main/images/utap_final_project_stock_news_app_writeup-2.jpg?raw=true)
+![alt text](https://github.com/nguyenho51/edu-utap-final-project-stocknewsapp/blob/main/images/utap_final_project_stock_news_app_writeup-3.jpg?raw=true)
+![alt text](https://github.com/nguyenho51/edu-utap-final-project-stocknewsapp/blob/main/images/utap_final_project_stock_news_app_writeup-4.jpg?raw=true)
+
