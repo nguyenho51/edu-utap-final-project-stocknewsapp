@@ -1,8 +1,9 @@
 ## Repository for University of Texas at Austin - CS386T: Android Programming 
 ## Final Project Fall 2022 (edu-utap-final-project-stock-news-app)
 
-Author: Nguyen Ho  
-Email: ngho@eng.ucsd.edu or ngho@utexas.edu
+# Author
+Nguyen Ho  
+Contact: ngho@eng.ucsd.edu or ngho@utexas.edu
 
 # Stock News App
 
@@ -28,3 +29,5 @@ Please make sure to update tests as appropriate.
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+![alt text](https://github.com/nguyenho51/edu-utap-final-project-stocknewsapp/blob/[branch]/image.jpg?raw=true)
